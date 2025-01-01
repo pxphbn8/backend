@@ -12,29 +12,47 @@ import loginRoutes from './routes/loginRoute.js';
 import signupRoutes from './routes/signupRoute.js';
 import todayRoutes from './routes/todayRoute.js';
 import searchRoutes from './routes/searchRoute.js';
-import commentRoute from './routes/commentRoute.js';
+import commentRoutes from './routes/commentRoute.js';
+import Routes from './routes/uploadFileRoute.js';
+import router from './routes/forgotpasswordRoute.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const app = express();
+
 
 // Cấu hình CORS theo nhu cầu của bạn
 app.use(cors());
+
 
 // Parse request bodies (req.body)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Kết nối đến cơ sở dữ liệu MongoDB
-const MONGO_URI = 'mongodb://localhost:27017/ToDoListDB'; // Thay thế bằng địa chỉ MongoDB của bạn
-mongoose.connect(MONGO_URI, {
+// // Kết nối đến cơ sở dữ liệu MongoDB
+// const MONGO_URI = 'mongodb://localhost:27017/ToDoListDB';
+// mongoose.connect(MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+ 
+// });
+
+
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
- 
-});
+}).then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
+
+
+// mongoose.connect('mongodb://localhost:27017/ToDoListDB');
+
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// db.once('open', () => {
+//   console.log('Connected to MongoDB');
+// });
 
 // Sử dụng router cho các endpoint của Task
 app.use('/api/tasks', taskRoutes);
@@ -45,15 +63,16 @@ app.use('/api/login', loginRoutes);
 app.use('/api/signup', signupRoutes);
 app.use('/api/today', todayRoutes);
 app.use('/api/search', searchRoutes);
-app.use('/api/comments', commentRoute);
+app.use('/api/comments', commentRoutes);
+app.use('/api/uploadfile', Routes);
+app.use('/api/auth', router);
 
 
-// Bình thường bạn sẽ muốn phục vụ static files cho Front-end ở đây
-// app.use(express.static(join(__dirname, '../Front-end')));
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
 
 
