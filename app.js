@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import mongoose from 'mongoose';
-import taskRoutes from './routes/taskRoute.js'; // Đảm bảo rằng đường dẫn đến file route là đúng
+import taskRoutes from './routes/taskRoute.js'; 
 import homeRoutes from './routes/homeRoute.js';
 import importantRoutes from './routes/importantRoute.js';
 import completedRoutes from './routes/completedRoute.js';
@@ -37,22 +37,17 @@ app.use(express.urlencoded({ extended: true }));
  
 // });
 
+mongoose.connect('mongodb+srv://vuducluong12a:123@cluster0.kznsm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster0');
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
 
 
 
-// mongoose.connect('mongodb://localhost:27017/ToDoListDB');
 
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-// db.once('open', () => {
-//   console.log('Connected to MongoDB');
-// });
 
 // Sử dụng router cho các endpoint của Task
 app.use('/api/tasks', taskRoutes);
@@ -73,6 +68,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 
 
