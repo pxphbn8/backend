@@ -13,7 +13,7 @@ import signupRoutes from './routes/signupRoute.js';
 import todayRoutes from './routes/todayRoute.js';
 import searchRoutes from './routes/searchRoute.js';
 import commentRoutes from './routes/commentRoute.js';
-// import Routes from './routes/uploadFileRoute.js';
+import Routes from './routes/uploadFileRoute.js';
 import router from './routes/forgotpasswordRoute.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -59,7 +59,7 @@ app.use('/api/signup', signupRoutes);
 app.use('/api/today', todayRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/comments', commentRoutes);
-// app.use('/api/uploadfile', Routes);
+app.use('/api/uploadfile', Routes);
 app.use('/api/auth', router);
 
 
