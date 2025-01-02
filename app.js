@@ -3,6 +3,12 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
+// Import các models
+import User from './models/userModel.js';
+import Task from './models/taskModel.js';
+import Comment from './models/CommentModel.js';
+import UploadFile from './models/uploadFileModel.js'; // Model cho các tệp đính kèm
+
 // Import các routes
 import taskRoutes from './routes/taskRoute.js'; 
 import homeRoutes from './routes/homeRoute.js';
@@ -32,12 +38,10 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+}).then(() => {
   console.log('Connected to MongoDB');
+}).catch((err) => {
+  console.error('MongoDB connection error:', err);
 });
 
 // Đăng ký các routes
@@ -53,21 +57,24 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/uploadfile', uploadFileRoutes);
 app.use('/api/auth', forgotPasswordRoutes);
 
-// Route mặc định
+// Route mặc định trả về toàn bộ dữ liệu
 app.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find().populate('user_id', 'name email');
+    const tasks = await Task.find().populate('user_id', 'name email'); // Populate để lấy thông tin user từ task
     const users = await User.find();
     const comments = await Comment.find();
+    const files = await UploadFile.find();
 
     res.json({
       message: 'All data from the API',
       tasks: tasks,
       users: users,
-      comments: comments
+      comments: comments,
+      files: files
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch data' });
+    console.error('Error fetching data:', err); // Log lỗi chi tiết
+    res.status(500).json({ error: 'Failed to fetch data', details: err.message });
   }
 });
 
