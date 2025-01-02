@@ -4,6 +4,11 @@ import bodyParser from "body-parser";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
+// Import các models
+import User from './models/userModel.js'; 
+import Task from './models/taskModel.js'; 
+import Comment from './models/commentModel.js'; 
+
 // Import các routes
 import taskRoutes from './routes/taskRoute.js'; 
 import homeRoutes from './routes/homeRoute.js';
@@ -53,11 +58,10 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/uploadfile', uploadFileRoutes);
 app.use('/api/auth', forgotPasswordRoutes);
 
-
 // Route render tất cả users
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find(); // Tìm tất cả users trong MongoDB
     res.json(users); // Trả về danh sách users dưới dạng JSON
   } catch (err) {
     res.status(500).send('Error retrieving users from MongoDB');
@@ -77,7 +81,7 @@ app.get('/tasks', async (req, res) => {
 // Route render tất cả comments
 app.get('/comments', async (req, res) => {
   try {
-    const comments = await Comment.find();
+    const comments = await Comment.find(); // Tìm tất cả comments trong MongoDB
     res.json(comments); // Trả về danh sách comments dưới dạng JSON
   } catch (err) {
     res.status(500).send('Error retrieving comments from MongoDB');
@@ -86,8 +90,9 @@ app.get('/comments', async (req, res) => {
 
 // Đảm bảo API trả về kết quả mặc định
 app.get('/', (req, res) => {
-  res.send('Hello World!'); // Câu trả lời đơn giản
+  res.send('Hello World!');
 });
+
 // Start server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
