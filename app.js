@@ -53,6 +53,10 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/uploadfile', uploadFileRoutes);
 app.use('/api/auth', forgotPasswordRoutes);
 
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 // Start server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
