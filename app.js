@@ -54,8 +54,39 @@ app.use('/api/uploadfile', uploadFileRoutes);
 app.use('/api/auth', forgotPasswordRoutes);
 
 
+// Route render tất cả users
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users); // Trả về danh sách users dưới dạng JSON
+  } catch (err) {
+    res.status(500).send('Error retrieving users from MongoDB');
+  }
+});
+
+// Route render tất cả tasks
+app.get('/tasks', async (req, res) => {
+  try {
+    const tasks = await Task.find().populate('user_id', 'name email'); // populate để lấy thông tin user
+    res.json(tasks); // Trả về danh sách tasks dưới dạng JSON
+  } catch (err) {
+    res.status(500).send('Error retrieving tasks from MongoDB');
+  }
+});
+
+// Route render tất cả comments
+app.get('/comments', async (req, res) => {
+  try {
+    const comments = await Comment.find();
+    res.json(comments); // Trả về danh sách comments dưới dạng JSON
+  } catch (err) {
+    res.status(500).send('Error retrieving comments from MongoDB');
+  }
+});
+
+// Đảm bảo API trả về kết quả mặc định
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello World!'); // Câu trả lời đơn giản
 });
 // Start server
 const PORT = process.env.PORT || 3001;
