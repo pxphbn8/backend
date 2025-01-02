@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import bodyParser from "body-parser";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
@@ -29,17 +28,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Kết nối đến MongoDB
-const mongoURI = process.env.MONGO_URI;
-if (!mongoURI) {
-  console.error("MongoDB URI không được cấu hình trong .env");
-  process.exit(1);
-}
+// Kết nối MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
-mongoose.connect(mongoURI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
 
+// Đăng ký các routes
 app.use('/api/tasks', taskRoutes);
 app.use('/api/home', homeRoutes);
 app.use('/api/important', importantRoutes);
@@ -52,29 +53,22 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/uploadfile', uploadFileRoutes);
 app.use('/api/auth', forgotPasswordRoutes);
 
-// Route mặc định hiển thị danh sách routes
-app.get('/', (req, res) => {
-  const routes = [
-    { path: '/api/tasks', description: 'Quản lý tasks API' },
-    { path: '/api/home', description: 'Route home' },
-    { path: '/api/important', description: 'Route important' },
-    { path: '/api/completed', description: 'Route completed' },
-    { path: '/api/login', description: 'Route login' },
-    { path: '/api/signup', description: 'Route signup' },
-    { path: '/api/today', description: 'Route today' },
-    { path: '/api/search', description: 'Route search' },
-    { path: '/api/comments', description: 'Route comments' },
-    { path: '/api/uploadfile', description: 'Route upload file' },
-    { path: '/api/auth', description: 'Route forgot password' },
-  ];
+// Route mặc định
+app.get('/', async (req, res) => {
+  try {
+    const tasks = await Task.find().populate('user_id', 'name email');
+    const users = await User.find();
+    const comments = await Comment.find();
 
-  let html = '<h1>Welcome to the API</h1><ul>';
-  routes.forEach((route) => {
-    html += `<li><a href="${route.path}">${route.path}</a> - ${route.description}</li>`;
-  });
-  html += '</ul>';
-
-  res.send(html);
+    res.json({
+      message: 'All data from the API',
+      tasks: tasks,
+      users: users,
+      comments: comments
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
 });
 
 // Start server
