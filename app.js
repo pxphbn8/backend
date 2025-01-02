@@ -60,13 +60,12 @@ app.use('/api/auth', forgotPasswordRoutes);
 // Route mặc định trả về toàn bộ dữ liệu
 app.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find().populate('user_id', 'name email'); // Populate để lấy thông tin user từ task
+    const tasks = await Task.find().populate('user_id', 'name email'); 
     const users = await User.find();
     const comments = await Comment.find();
     const files = await UploadFile.find();
 
     res.json({
-      message: 'All data from the API',
       tasks: tasks,
       users: users,
       comments: comments,
