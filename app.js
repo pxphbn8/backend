@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 // Import các models
 import User from './models/userModel.js'; 
 import Task from './models/taskModel.js'; 
-import Comment from './models/commentModel.js'; 
+import Comment from './models/CommentModel.js'; 
 
 // Import các routes
 import taskRoutes from './routes/taskRoute.js'; 
