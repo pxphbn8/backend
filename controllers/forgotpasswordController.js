@@ -22,7 +22,9 @@ export const forgotPassword = async (req, res) => {
 
     // Tạo token đặt lại mật khẩu
     const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const resetLink = `https://backend-86dc.onrender.com:${process.env.PORT}/api/auth/verify-reset-password/${resetToken}`;
+    const resetLink = `${process.env.BASE_URL}/api/auth/verify-reset-password/${resetToken}`;
+console.log('Reset Link:', resetLink);
+
 
     // Lưu token vào cơ sở dữ liệu
     user.resetToken = resetToken;
