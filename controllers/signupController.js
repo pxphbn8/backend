@@ -24,6 +24,7 @@ export const checkSignUp = async (req, res) => {
       name,
       email,
       password,
+      isActive: true,
       personalInfo: "none",
     });
 
